@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::post('/login', [LoginController::class, 'authenticate']);
+
+Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
+    $request->user()->tokens()->delete();
+
+    return response('Loggedout', 200);
 });
