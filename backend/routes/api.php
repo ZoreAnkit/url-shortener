@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\ShortUrlController;
+use App\Http\Controllers\Api\ShortUrlController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +19,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::resource('shorturls', ShortUrlController::class);
+Route::group([
+    'middleware' => 'auth:sanctum',
+], function () {
+
+    Route::resource('shorturls', ShortUrlController::class);
+});

@@ -7,6 +7,9 @@ const ShorturlService = {
     createShortUrl(original_url) {
         return ApiService.post('/api/shorturls', { original_url: original_url });
     },
+    updateShortUrl(id, original_url) {
+        return ApiService.put(`/api/shorturls/${id}`, { original_url: original_url });
+    }
 };
 
 export default ShorturlService;

@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\ShortUrl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -38,7 +39,7 @@ class ShortUrlController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'original_url' => 'required',
+            'original_url' => 'required|url',
         ]);
         $shortUrl = new ShortUrl();
         $shortUrl->user_id = auth()->id();
@@ -78,7 +79,14 @@ class ShortUrlController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'original_url' => 'required',
+        ]);
+        $shortUrl = ShortUrl::findOrFail($id);
+        $shortUrl->user_id = auth()->id();
+        $shortUrl->original_url = $validatedData['original_url'];
+        $shortUrl->generateShortUrl();
+        $shortUrl->save();
     }
 
     /**

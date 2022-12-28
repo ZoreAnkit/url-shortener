@@ -3,6 +3,7 @@ import { computed } from "@vue/reactivity";
 import { onMounted, ref } from "vue";
 import Pagination from "./Pagination.vue";
 import ShorturlService from "../services/shorturl.service";
+import { useRouter } from "vue-router";
 
 const currentPage = ref(1);
 const perPage = ref(10);
@@ -21,9 +22,33 @@ function getlistData() {
   });
 }
 const original_url = ref("");
+const router = useRouter();
 async function submit() {
-  ShorturlService.createShortUrl(original_url.value);
-  await getlistData();
+  if (original_url.value == "") return;
+  if (pagedData.value?.length >= 10) {
+    router.push({ name: "package" });
+    return;
+  } else {
+    ShorturlService.createShortUrl(original_url.value)
+      .then(async () => {
+        await getlistData();
+        original_url.value = "";
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+}
+
+function update(row) {
+  row.editing = false;
+  ShorturlService.updateShortUrl(row.id, row.original_url)
+    .then(async () => {
+      await getlistData();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 }
 
 onMounted(async () => {
@@ -32,8 +57,10 @@ onMounted(async () => {
 </script>
 <template>
   <div>
-    <div class="mx-auto w-64 mb-4 flex">
-      <label for="url" class="block text-gray-700 font-bold mb-2 inline-block"
+    <div class="mx-auto w-2/4 m-4 flex">
+      <label
+        for="url"
+        class="block text-gray-700 font-bold mb-2 inline-block mt-6 mr-2"
         >URL:</label
       >
       <input
@@ -44,7 +71,7 @@ onMounted(async () => {
       />
       <button
         @click="submit"
-        class="px-4 py-2 bg-blue-500 text-white rounded-full mt-4 inline-block"
+        class="px-4 py-2 bg-blue-500 text-white rounded-full mt-4 inline-block mb-3 ml-2"
       >
         Submit
       </button>
@@ -95,7 +122,7 @@ onMounted(async () => {
             </template>
             <template v-else>
               <button
-                @click="row.editing = false"
+                @click="update(row)"
                 class="px-2 py-1 bg-green-500 text-white rounded-full"
               >
                 Save
