@@ -62,11 +62,11 @@
 ## About The Project
 [screencast-nimbus-capture-2022.12.28-16_57_28.webm](https://user-images.githubusercontent.com/46300882/209805580-b86bef10-7559-48ff-9300-694bfb66cded.webm)
 
-This is admin panel with user login where users can create short urls. This projects uses laravel santum for authentication which is out of the box feature.
+This project is an admin panel that includes user login functionality. It allows users to create short URLs using Vue 3 in the frontend, along with Pinia store for state management and services to make API calls for inserting, updating, and selecting data. The frontend communicates with the backend via APIs, allowing for a flexible and decoupled architecture.
 
-This project uses Vue 3 in frontend with pinia store for managing state along with services to create api calls to insert/update/select.
+The project utilizes Laravel Sanctum for authentication, which is a built-in feature that provides secure, stateless authentication for single-page applications.
 
-This project consist of static pricing page. Users are allowed to create atmost 10 short urls.
+The project also includes a static pricing page, which allows users to create a maximum of 10 short URLs. However, in future updates, we plan to expand the options available to users by offering packages that allow for the creation of additional URLs. This feature will enable users to tailor the service to their specific needs and use cases.
 
 Future update:
 Users can buy packages to create more urls.
