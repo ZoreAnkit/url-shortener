@@ -62,6 +62,15 @@
 ## About The Project
 [screencast-nimbus-capture-2022.12.28-16_57_28.webm](https://user-images.githubusercontent.com/46300882/209805580-b86bef10-7559-48ff-9300-694bfb66cded.webm)
 
+This is admin panel with user login where users can create short urls. This projects uses laravel santum for authentication which is out of the box feature.
+
+This project uses Vue 3 in frontend with pinia store for managing state along with services to create api calls to insert/update/select.
+
+This project consist of static pricing page. Users are allowed to create atmost 10 short urls.
+
+Future update:
+Users can buy packages to create more urls.
+
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### Built With
@@ -74,15 +83,6 @@
 <!-- GETTING STARTED -->
 
 ## Getting Started
-
-This is admin panel with user login where users can create short urls. This projects uses laravel santum for authentication which is out of the box feature.
-
-This project uses Vue 3 in frontend with pinia store for managing state along with services to create api calls to insert/update/select.
-
-This project consist of static pricing page. Users are allowed to create atmost 10 short urls.
-
-Future update:
-Users can buy packages to create more urls.
 
 sql file is included in repo to import directly in local database. Perform mentioned steps to have project running locally
 
