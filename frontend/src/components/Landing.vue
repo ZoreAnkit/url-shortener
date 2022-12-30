@@ -3,8 +3,11 @@ import { computed } from "@vue/reactivity";
 import { onMounted, ref } from "vue";
 import Pagination from "./Pagination.vue";
 import ShorturlService from "../services/shorturl.service";
+import UserService from "../services/user.service";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "../stores/AuthStore";
 
+const isModalOpen = ref(false);
 const currentPage = ref(1);
 const perPage = ref(10);
 const totalPages = ref(0);
@@ -25,9 +28,9 @@ const original_url = ref("");
 const router = useRouter();
 async function submit() {
   if (original_url.value == "") return;
-  if (pagedData.value?.length >= 10) {
+  const urlCount = pagedData.value?.length;
+  if (urlCount >= urlLimit) {
     router.push({ name: "package" });
-    return;
   } else {
     ShorturlService.createShortUrl(original_url.value)
       .then(async () => {
@@ -51,8 +54,23 @@ function update(row) {
     });
 }
 
+const urlLimit = ref("");
+const authStore = useAuthStore();
+function saveUserPlan() {
+  UserService.updateUserPlan(authStore.currentUser.id, urlLimit.value)
+    .then(async () => {
+      isModalOpen.value = false;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
+
 onMounted(async () => {
   await getlistData();
+  UserService.getUserPlan(authStore.currentUser.id).then((response) => {
+    urlLimit.value = response.data.user.url_limit;
+  });
 });
 </script>
 <template>
@@ -75,6 +93,45 @@ onMounted(async () => {
       >
         Submit
       </button>
+    </div>
+
+    <div>
+      <button
+        @click="isModalOpen = true"
+        class="px-4 py-2 bg-blue-500 text-white rounded-full mt-4"
+      >
+        Open Modal
+      </button>
+      <div v-if="isModalOpen" class="modal is-active">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+          <div class="mx-auto w-2/4 m-4 flex">
+            <label
+              for="url"
+              class="block text-gray-700 font-bold mb-2 inline-block mt-6 mr-2"
+              >Select Plan:</label
+            >
+            <select
+              v-model="urlLimit"
+              class="border rounded p-2 w-full inline-block mr-2"
+            >
+              <option value="10">10 URLs</option>
+              <option value="1000">1000 URLs</option>
+            </select>
+            <button
+              @click="saveUserPlan"
+              class="px-4 py-2 bg-blue-500 text-white rounded-full mt-4 inline-block mb-3 ml-2"
+            >
+              Submit
+            </button>
+          </div>
+        </div>
+        <button
+          @click="isModalOpen = false"
+          class="modal-close is-large"
+          aria-label="close"
+        ></button>
+      </div>
     </div>
     <table class="table-auto w-full">
       <thead>

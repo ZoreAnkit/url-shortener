@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\ShortUrlController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -24,4 +25,5 @@ Route::group([
 ], function () {
 
     Route::resource('shorturls', ShortUrlController::class);
+    Route::resource('users', UserController::class);
 });

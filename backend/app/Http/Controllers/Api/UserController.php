@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\ShortUrl;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class ShortUrlController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +17,7 @@ class ShortUrlController extends Controller
      */
     public function index()
     {
-        $shortUrls = ShortUrl::all();
-        return response()->json(['success' => true, 'shortUrls' => $shortUrls], 200);
+        //
     }
 
     /**
@@ -39,21 +38,7 @@ class ShortUrlController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $validatedData = $request->validate([
-                'original_url' => 'required|url',
-            ]);
-            if ($validatedData) {
-                $shortUrl = new ShortUrl();
-                $shortUrl->user_id = auth()->id();
-                $shortUrl->original_url = $validatedData['original_url'];
-                $shortUrl->generateShortUrl();
-                $shortUrl->save();
-            }
-        } catch (Exception $e) {
-            Log::debug($e->getMessage());
-            response()->json($e->getMessage(), 400);
-        }
+        //
     }
 
     /**
@@ -64,7 +49,13 @@ class ShortUrlController extends Controller
      */
     public function show($id)
     {
-        //
+        try {
+            $user = User::findOrFail($id);
+            return response()->json(['success' => true, 'user' => $user], 200);
+        } catch (Exception $e) {
+            Log::debug($e->getMessage());
+            response()->json($e->getMessage(), 400);
+        }
     }
 
     /**
@@ -89,14 +80,12 @@ class ShortUrlController extends Controller
     {
         try {
             $validatedData = $request->validate([
-                'original_url' => 'required',
+                'urlLimit' => 'required',
             ]);
             if ($validatedData) {
-                $shortUrl = ShortUrl::findOrFail($id);
-                $shortUrl->user_id = auth()->id();
-                $shortUrl->original_url = $validatedData['original_url'];
-                $shortUrl->generateShortUrl();
-                $shortUrl->save();
+                $user = User::findOrFail($id);
+                $user->url_limit = $request->urlLimit;
+                $user->save();
             }
         } catch (Exception $e) {
             Log::debug($e->getMessage());
