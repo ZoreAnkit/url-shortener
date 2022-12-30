@@ -48,6 +48,7 @@ class ShortUrlController extends Controller
                 $shortUrl->user_id = auth()->id();
                 $shortUrl->original_url = $validatedData['original_url'];
                 $shortUrl->generateShortUrl();
+                $shortUrl->status = 'active';
                 $shortUrl->save();
             }
         } catch (Exception $e) {
@@ -94,8 +95,11 @@ class ShortUrlController extends Controller
             if ($validatedData) {
                 $shortUrl = ShortUrl::findOrFail($id);
                 $shortUrl->user_id = auth()->id();
-                $shortUrl->original_url = $validatedData['original_url'];
-                $shortUrl->generateShortUrl();
+                if ($shortUrl->original_url !== $validatedData['original_url']) {
+                    $shortUrl->original_url = $validatedData['original_url'];
+                    $shortUrl->generateShortUrl();
+                }
+                $shortUrl->status = $request->status;
                 $shortUrl->save();
             }
         } catch (Exception $e) {

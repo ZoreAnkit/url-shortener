@@ -29,7 +29,7 @@ const router = useRouter();
 async function submit() {
   if (original_url.value == "") return;
   const urlCount = pagedData.value?.length;
-  if (urlCount >= urlLimit) {
+  if (urlCount >= urlLimit.value) {
     router.push({ name: "package" });
   } else {
     ShorturlService.createShortUrl(original_url.value)
@@ -45,13 +45,19 @@ async function submit() {
 
 function update(row) {
   row.editing = false;
-  ShorturlService.updateShortUrl(row.id, row.original_url)
+  ShorturlService.updateShortUrl(row.id, row.original_url, row.status)
     .then(async () => {
       await getlistData();
     })
     .catch((error) => {
       console.log(error);
     });
+}
+
+function urlStatusChange(status, row) {
+  console.log("status", status, row);
+  row.status = status;
+  update(row);
 }
 
 const urlLimit = ref("");
@@ -74,7 +80,7 @@ onMounted(async () => {
 });
 </script>
 <template>
-  <div>
+  <div class="modal-vue">
     <div class="mx-auto w-2/4 m-4 flex">
       <label
         for="url"
@@ -93,44 +99,36 @@ onMounted(async () => {
       >
         Submit
       </button>
-    </div>
-
-    <div>
       <button
         @click="isModalOpen = true"
-        class="px-4 py-2 bg-blue-500 text-white rounded-full mt-4"
+        class="px-4 py-2 bg-blue-500 text-white rounded-full mt-4 ml-2 mb-3"
       >
-        Open Modal
+        Upgrade Plan
       </button>
-      <div v-if="isModalOpen" class="modal is-active">
-        <div class="modal-background"></div>
-        <div class="modal-content">
-          <div class="mx-auto w-2/4 m-4 flex">
-            <label
-              for="url"
-              class="block text-gray-700 font-bold mb-2 inline-block mt-6 mr-2"
-              >Select Plan:</label
-            >
-            <select
-              v-model="urlLimit"
-              class="border rounded p-2 w-full inline-block mr-2"
-            >
-              <option value="10">10 URLs</option>
-              <option value="1000">1000 URLs</option>
-            </select>
-            <button
-              @click="saveUserPlan"
-              class="px-4 py-2 bg-blue-500 text-white rounded-full mt-4 inline-block mb-3 ml-2"
-            >
-              Submit
-            </button>
-          </div>
-        </div>
+    </div>
+    <!-- overlay -->
+    <div class="overlay" v-if="isModalOpen" @click="isModalOpen = false"></div>
+    <div class="modal" v-if="isModalOpen">
+      <button class="close" @click="isModalOpen = false">x</button>
+      <div class="mx-auto w-full m-4 flex">
+        <label
+          for="url"
+          class="block text-gray-700 font-bold mb-2 inline-block mt-6 mr-2"
+          >Package:</label
+        >
+        <select
+          v-model="urlLimit"
+          class="border rounded p-2 w-full inline-block mr-2"
+        >
+          <option value="10">10 URLs</option>
+          <option value="1000">1000 URLs</option>
+        </select>
         <button
-          @click="isModalOpen = false"
-          class="modal-close is-large"
-          aria-label="close"
-        ></button>
+          @click="saveUserPlan"
+          class="px-4 py-2 bg-blue-500 text-white rounded-full mt-4 inline-block mb-3 ml-2"
+        >
+          Submit
+        </button>
       </div>
     </div>
     <table class="table-auto w-full">
@@ -157,7 +155,11 @@ onMounted(async () => {
               {{ row.original_url }}
             </template>
             <template v-else>
-              <input v-model="row.original_url" class="border p-2" />
+              <input
+                v-model="row.original_url"
+                class="border p-2"
+                :disabled="row.status == 'in_active'"
+              />
             </template>
           </td>
           <td class="border px-4 py-2">
@@ -185,6 +187,22 @@ onMounted(async () => {
                 Save
               </button>
             </template>
+            <template v-if="!row.editing">
+              <button
+                @click="urlStatusChange('in_active', row)"
+                class="px-2 py-1 bg-red-500 text-white rounded-full ml-2"
+                v-if="row.status == 'active'"
+              >
+                De-activate
+              </button>
+              <button
+                @click="urlStatusChange('active', row)"
+                class="px-2 py-1 bg-green-500 text-white rounded-full ml-2"
+                v-else
+              >
+                Activate
+              </button>
+            </template>
           </td>
         </tr>
       </tbody>
@@ -192,3 +210,30 @@ onMounted(async () => {
     <Pagination v-model="currentPage" :total-pages="totalPages" />
   </div>
 </template>
+
+<style>
+.modal-vue .overlay {
+  position: fixed;
+  z-index: 9998;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-vue .modal {
+  position: relative;
+  width: 650px;
+  z-index: 9999;
+  margin: 0 auto;
+  padding: 20px 30px;
+  background-color: #fff;
+}
+
+.modal-vue .close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+</style>

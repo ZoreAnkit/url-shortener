@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 28, 2022 at 12:06 PM
+-- Generation Time: Dec 30, 2022 at 01:10 PM
 -- Server version: 10.4.20-MariaDB
 -- PHP Version: 7.4.21
 
@@ -58,7 +58,9 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (2, '2014_10_12_100000_create_password_resets_table', 1),
 (3, '2019_08_19_000000_create_failed_jobs_table', 1),
 (4, '2019_12_14_000001_create_personal_access_tokens_table', 1),
-(5, '2022_12_28_063104_create_short_urls_table', 2);
+(5, '2022_12_28_063104_create_short_urls_table', 2),
+(8, '2022_12_30_100814_add_url_limit_users_table', 3),
+(9, '2022_12_30_115516_add_status_shorturls_table', 4);
 
 -- --------------------------------------------------------
 
@@ -103,15 +105,17 @@ CREATE TABLE `short_urls` (
   `short_url` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `status` enum('active','in_active') COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `short_urls`
 --
 
-INSERT INTO `short_urls` (`id`, `user_id`, `original_url`, `short_url`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(1, 2, 'https://www.google.com/', 'dywWV1', '2022-12-28 05:32:41', '2022-12-28 05:32:41', NULL);
+INSERT INTO `short_urls` (`id`, `user_id`, `original_url`, `short_url`, `created_at`, `updated_at`, `deleted_at`, `status`) VALUES
+(1, 2, 'https://www.google.com', 'Z7U7Vi', '2022-12-28 05:32:41', '2022-12-30 06:38:41', NULL, 'active'),
+(2, 2, 'https://www.youtubecheck.com', 'cP3zng', '2022-12-28 05:58:03', '2022-12-28 05:58:14', NULL, 'active');
 
 -- --------------------------------------------------------
 
@@ -127,16 +131,18 @@ CREATE TABLE `users` (
   `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL,
+  `url_limit` enum('10','1000') COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`) VALUES
-(1, 'MyUsername', 'thisis@myemail.com', NULL, '$2y$10$F1DgDnds2CdDitQmo2DJjeqG9Or54Bb4tdhEsQnxCMF7ADtlkFEYO', NULL, NULL, NULL),
-(2, 'admin', 'admin@gmail.com', NULL, '$2y$10$lCVMGnUmKmJaSBpxNdwM/uip/DpzGAA8m6olf9WvjdpAXf.BlCJ1i', NULL, NULL, NULL);
+INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `created_at`, `updated_at`, `deleted_at`, `url_limit`) VALUES
+(1, 'MyUsername', 'thisis@myemail.com', NULL, '$2y$10$F1DgDnds2CdDitQmo2DJjeqG9Or54Bb4tdhEsQnxCMF7ADtlkFEYO', NULL, NULL, NULL, NULL, '10'),
+(2, 'admin', 'admin@gmail.com', NULL, '$2y$10$lCVMGnUmKmJaSBpxNdwM/uip/DpzGAA8m6olf9WvjdpAXf.BlCJ1i', NULL, NULL, '2022-12-30 06:39:39', NULL, '10');
 
 --
 -- Indexes for dumped tables
@@ -196,7 +202,7 @@ ALTER TABLE `failed_jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `personal_access_tokens`
@@ -208,7 +214,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `short_urls`
 --
 ALTER TABLE `short_urls`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `users`
