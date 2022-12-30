@@ -62,6 +62,11 @@
 ## About The Project
 [screencast-nimbus-capture-2022.12.28-16_57_28.webm](https://user-images.githubusercontent.com/46300882/209805580-b86bef10-7559-48ff-9300-694bfb66cded.webm)
 
+Plan selection for user and active in-active urls demo:
+
+[screencast-nimbus-capture-2022.12.30-17_55_18.webm](https://user-images.githubusercontent.com/46300882/210070248-14274fc8-d6b0-4f63-8873-315fade39607.webm)
+
+
 This project is an admin panel that includes user login functionality. It allows users to create short URLs using Vue 3 in the frontend, along with Pinia store for state management and services to make API calls for inserting, updating, and selecting data. The frontend communicates with the backend via APIs, allowing for a flexible and decoupled architecture.
 
 The project utilizes Laravel Sanctum for authentication, which is a built-in feature that provides secure, stateless authentication for single-page applications.
